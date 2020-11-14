@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -25,14 +24,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-class BeerControllerTest {
+class BeerControllerListTest {
 
     @Mock
     BeerService beerService;
@@ -44,37 +45,6 @@ class BeerControllerTest {
 
     BeerDto testBeer;
 
-    @BeforeEach
-    void setUp() {
-        testBeer = BeerDto.builder().id(UUID.randomUUID())
-                .version(1)
-                .beerName("Beer1")
-                .beerStyle(BeerStyleEnum.PALE_ALE)
-                .price(new BigDecimal("12.99"))
-                .quantityOnHand(4)
-                .upc(123456789012L)
-                .createdDate(OffsetDateTime.now())
-                .lastModifiedDate(OffsetDateTime.now())
-                .build();
-
-        mockMvc = MockMvcBuilders.standaloneSetup(beerController).build();
-    }
-
-    @Test
-    void testGetBeerById() throws Exception {
-        given(beerService.findBeerById(any())).willReturn(testBeer);
-
-        mockMvc.perform(get("/api/v1/beer/" + testBeer.getId()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(testBeer.getId().toString())))
-                .andExpect(jsonPath("$.beerName", is("Beer1")));
-    }
-
-    /***
-    //@Nested - java: annotation type not applicable to this kind of declaration WHY?
-    @DisplayName("list ops -")
-    public class TestListOperations {
 
         @Captor
         ArgumentCaptor<String> beerNameCaptor;
@@ -103,6 +73,8 @@ class BeerControllerTest {
             beerPagedList = new BeerPagedList(beers,
                     PageRequest.of(1,1), 2);
 
+            mockMvc = MockMvcBuilders.standaloneSetup(beerController).build();
+
             given(beerService.listBeers(
                     beerNameCaptor.capture(),
                     styleCaptor.capture(),
@@ -112,17 +84,20 @@ class BeerControllerTest {
         }
 
 
-        @DisplayName("test list beer - no parms")
-        @Test
-        void testListBeers() throws Exception {
-            mockMvc.perform(get("/api/v1/beer")
-                    .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-
-        }
-
+    @DisplayName("test list beer - no parms")
+    @Test
+    void testListBeers() throws Exception {
+        mockMvc.perform(get("/api/v1/beer")
+                //.accept(MediaType.APPLICATION_JSON) // optional?
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content", hasSize(2) )) // expect 2 entries in list
+        ;
 
     }
-/***/
+
+
+
 
 }
