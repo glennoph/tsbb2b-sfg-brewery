@@ -21,6 +21,7 @@ import guru.springframework.brewery.services.BeerService;
 import guru.springframework.brewery.web.model.BeerDto;
 import guru.springframework.brewery.web.model.BeerPagedList;
 import guru.springframework.brewery.web.model.BeerStyleEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Slf4j
 @RequestMapping("/api/v1/beer")
 @RestController
 public class BeerController {
@@ -62,7 +64,8 @@ public class BeerController {
 
     @GetMapping(path = {"/{beerId}"},produces = { "application/json" })
     public ResponseEntity<BeerDto>  getBeerById(@PathVariable("beerId") UUID beerId){
-
-        return new ResponseEntity<>(beerService.findBeerById(beerId), HttpStatus.OK);
+        ResponseEntity<BeerDto> responseEntity = new ResponseEntity<>(beerService.findBeerById(beerId), HttpStatus.OK);
+        log.debug(String.valueOf(responseEntity));
+        return responseEntity;
     }
 }

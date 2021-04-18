@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
@@ -65,13 +66,14 @@ class BeerControllerTest {
         given(beerService.findBeerById(any())).willReturn(testBeer);
 
         mockMvc.perform(get("/api/v1/beer/" + testBeer.getId()))
+                .andDo(MockMvcResultHandlers.print()) // print the json result string
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(testBeer.getId().toString())))
                 .andExpect(jsonPath("$.beerName", is("Beer1")));
     }
 
-    /***
+    /***/
     //@Nested - java: annotation type not applicable to this kind of declaration WHY?
     @DisplayName("list ops -")
     public class TestListOperations {
