@@ -17,6 +17,7 @@
 
 package guru.springframework.brewery.web.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.springframework.brewery.services.BeerService;
 import guru.springframework.brewery.web.model.BeerDto;
 import guru.springframework.brewery.web.model.BeerPagedList;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -70,4 +72,5 @@ public class BeerController {
         log.debug(String.valueOf(responseEntity));
         return responseEntity;
     }
+
 }
