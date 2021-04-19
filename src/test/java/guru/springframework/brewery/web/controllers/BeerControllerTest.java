@@ -6,9 +6,9 @@ import guru.springframework.brewery.web.model.BeerPagedList;
 import guru.springframework.brewery.web.model.BeerStyleEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -63,19 +64,22 @@ class BeerControllerTest {
 
     @Test
     void testGetBeerById() throws Exception {
+        // mock findBeerById() return test beer
         given(beerService.findBeerById(any())).willReturn(testBeer);
-
+        // test mvc get beer id
         mockMvc.perform(get("/api/v1/beer/" + testBeer.getId()))
                 .andDo(MockMvcResultHandlers.print()) // print the json result string
-                .andExpect(status().isOk())
+                .andExpect(status().isOk()) // check status is ok
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(testBeer.getId().toString())))
-                .andExpect(jsonPath("$.beerName", is("Beer1")));
+                .andExpect(jsonPath("$.id", is(testBeer.getId().toString()))) // check id
+                .andExpect(jsonPath("$.beerName", is("Beer1"))); // check name
     }
 
     /***/
-    //@Nested - java: annotation type not applicable to this kind of declaration WHY?
-    @DisplayName("list ops -")
+
+
+    @DisplayName("test list ops -")
+    @Nested
     public class TestListOperations {
 
         @Captor
@@ -113,17 +117,16 @@ class BeerControllerTest {
 
         }
 
-
         @DisplayName("test list beer - no parms")
         @Test
         void testListBeers() throws Exception {
             mockMvc.perform(get("/api/v1/beer")
                     .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content", hasSize(2)))
+                    .andDo(MockMvcResultHandlers.print()) // print result
+            ;
         }
-
-
     }
 /***/
 
