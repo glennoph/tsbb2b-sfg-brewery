@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,13 +54,13 @@ class BeerOrderControllerTest {
         beerOrder = BeerOrderDto.builder()
                 .id(UUID.randomUUID())
                 .customerRef("1234")
-                .beerOrderLines(List.of(BeerOrderLineDto
+                .beerOrderLines(Arrays.asList(BeerOrderLineDto
                         .builder()
                         .beerId(validBeer.getId())
                         .build()))
                 .build();
 
-        beerOrderPagedList = new BeerOrderPagedList(List.of(beerOrder),
+        beerOrderPagedList = new BeerOrderPagedList(Arrays.asList(beerOrder),
                 PageRequest.of(1, 1), 1L);
     }
 
